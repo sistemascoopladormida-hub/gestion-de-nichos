@@ -1,0 +1,157 @@
+@import "tailwindcss";
+
+@theme {
+  /* DESIGN.md — parchment atelier */
+  --color-parchment: #f7f7f4;
+  --color-paper: #f9faf7;
+  --color-bone: #f2f1ed;
+  --color-linen: #e6e5e0;
+  --color-stone: #cdcdc9;
+  --color-mist: #a1a19f;
+  --color-driftwood: #84847e;
+  --color-ash: #7a7974;
+  --color-ink: #26251e;
+  --color-twilight: #282834;
+  --color-ember: #f54e00;
+  --color-amber: #c08532;
+  --color-forest: #34785c;
+  --color-verdant: #1f8a65;
+  --color-crimson: #cf2d56;
+
+  /* Legacy aliases → design tokens */
+  --color-coop-primary: #26251e;
+  --color-coop-primary-dark: #1a1914;
+  --color-coop-accent: #f54e00;
+  --color-coop-surface: #f2f1ed;
+  --color-coop-border: #cdcdc9;
+
+  /* Nicho map — tint surfaces + ink text (WCAG) */
+  --color-nicho-disponible: #dceee6;
+  --color-nicho-disponible-border: #34785c;
+  --color-nicho-ocupado: #f5e4e8;
+  --color-nicho-ocupado-border: #cf2d56;
+  --color-nicho-prestamo: #f3ecd8;
+  --color-nicho-prestamo-border: #c08532;
+  --color-nicho-inhabilitado: #e8e7e3;
+  --color-nicho-inhabilitado-border: #7a7974;
+  --color-nicho-reservado: #e4eaf3;
+  --color-nicho-reservado-border: #4a6fa5;
+  --color-nicho-mantenimiento: #ebe6df;
+  --color-nicho-mantenimiento-border: #7a6b55;
+  --color-nicho-sin-datos: #f0eeea;
+  --color-nicho-sin-datos-border: #84847e;
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-garamond), ui-serif, Georgia, serif;
+  --font-mono: var(--font-mono-jb), ui-monospace, monospace;
+
+  --radius-card: 8px;
+  --radius-modal: 12px;
+  --shadow-card: 0 1px 2px rgba(38, 37, 30, 0.06),
+    0 4px 12px rgba(38, 37, 30, 0.04);
+  --shadow-header: 0 1px 0 color-mix(in oklab, #26251e 8%, transparent);
+  --shadow-subtle: 0 0 0 1px color-mix(in oklab, #26251e 8%, transparent);
+
+  --text-heading-sm: 18px;
+  --text-heading-lg: 28px;
+}
+
+@layer base {
+  body {
+    @apply bg-parchment text-ink antialiased font-sans text-sm leading-relaxed;
+  }
+
+  ::selection {
+    background: #8bc4f8;
+    color: #26251e;
+  }
+
+  h1,
+  h2,
+  h3 {
+    @apply font-sans tracking-tight text-ink;
+  }
+}
+
+@layer components {
+  .ui-stack-page {
+    @apply space-y-8 md:space-y-10;
+  }
+
+  .ui-surface {
+    @apply rounded-[var(--radius-card)] border border-stone/70 bg-bone;
+    box-shadow: var(--shadow-card);
+  }
+
+  .ui-surface-interactive {
+    @apply transition-[border-color,background-color,box-shadow] duration-150;
+  }
+  .ui-surface-interactive:hover {
+    @apply border-stone bg-linen/30;
+    box-shadow: 0 2px 8px rgba(38, 37, 30, 0.07);
+  }
+  .ui-surface-interactive:focus-visible {
+    @apply outline-2 outline-offset-2 outline-forest;
+  }
+
+  .ui-card {
+    @apply rounded-[var(--radius-card)] border border-stone/70 bg-bone p-6;
+    box-shadow: var(--shadow-card);
+  }
+
+  .ui-card-hover:hover {
+    @apply border-stone;
+    box-shadow: 0 2px 10px rgba(38, 37, 30, 0.08);
+  }
+
+  .ui-btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-[var(--radius-card)] bg-ink px-5 py-2.5 text-sm font-normal text-parchment transition-colors duration-150;
+  }
+  .ui-btn-primary:hover {
+    @apply bg-[#1a1914];
+  }
+  .ui-btn-primary:focus-visible {
+    @apply outline-2 outline-offset-2 outline-forest;
+  }
+
+  .ui-btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-[var(--radius-card)] bg-linen px-5 py-2.5 text-sm font-normal text-ink transition-colors duration-150;
+  }
+  .ui-btn-secondary:hover {
+    @apply bg-stone/40;
+  }
+
+  .ui-btn-outline {
+    @apply inline-flex items-center justify-center gap-2 rounded-[var(--radius-card)] border border-[var(--color-twilight)] bg-transparent px-4 py-2.5 text-sm font-normal text-[var(--color-twilight)] transition-colors duration-150;
+  }
+  .ui-btn-outline:hover {
+    @apply bg-[var(--color-paper)] text-ink border-ink/40;
+  }
+
+  .ui-btn-ghost {
+    @apply inline-flex items-center gap-2 rounded-[var(--radius-card)] px-3 py-2 text-sm text-ink/70 transition-colors duration-150 hover:text-ink hover:underline;
+  }
+
+  .ui-btn-danger {
+    @apply inline-flex items-center justify-center gap-2 rounded-[var(--radius-card)] border border-crimson/30 bg-[color-mix(in_oklab,#cf2d56_8%,#f7f7f4)] px-4 py-2.5 text-sm text-crimson transition-colors duration-150 hover:bg-[color-mix(in_oklab,#cf2d56_14%,#f7f7f4)];
+  }
+
+  .ui-input {
+    @apply w-full rounded-[var(--radius-card)] border border-stone bg-parchment px-4 py-2.5 text-sm text-ink placeholder:text-mist transition-[border-color,box-shadow] duration-150;
+  }
+  .ui-input:focus {
+    @apply border-ink/30 outline-none ring-2 ring-forest/25;
+  }
+
+  .ui-kbd {
+    @apply rounded border border-stone bg-linen px-1.5 py-0.5 font-mono text-[11px] text-ash;
+  }
+
+  .ui-badge {
+    @apply inline-flex items-center rounded-md border border-stone/60 bg-linen px-2 py-0.5 text-xs font-medium text-ash;
+  }
+
+  .ui-eyebrow {
+    @apply text-xs font-medium uppercase tracking-wide text-ash;
+  }
+}
