@@ -33,7 +33,7 @@ function StatCardBody({
     <>
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <p className="text-sm font-medium text-ash">{label}</p>
+          <p className="text-pretty text-sm font-medium leading-snug text-ash">{label}</p>
           <p className="mt-1 text-3xl font-semibold tabular-nums tracking-tight text-ink md:text-4xl">
             {value}
           </p>

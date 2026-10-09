@@ -124,7 +124,7 @@ export default async function DashboardPage() {
           description="Préstamos, plazos de 10 años, documentación y nichos por completar."
         />
 
-        <div className="mb-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+        <div className="mb-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-5">
           <AlertCard
             href="/prestamos?filtro=vencidos"
             label="Préstamos vencidos"
@@ -134,7 +134,8 @@ export default async function DashboardPage() {
           />
           <AlertCard
             href="/prestamos?filtro=proximos"
-            label="Próximos a vencer (30 días)"
+            label="Próximos a vencer"
+            caption="Próximo plazo: 30 días"
             value={conteos.prestamosProximos}
             icon={Clock}
             tone={conteos.prestamosProximos > 0 ? "warning" : "neutral"}
@@ -149,6 +150,7 @@ export default async function DashboardPage() {
           <AlertCard
             href="/cementerio"
             label="10 años cumplidos"
+            caption="Plazo de concesión"
             value={conteos.diezAnios}
             icon={Clock}
             tone={conteos.diezAnios > 0 ? "warning" : "neutral"}
@@ -156,6 +158,7 @@ export default async function DashboardPage() {
           <AlertCard
             href="/cementerio"
             label="Ocupados sin datos"
+            caption="Completar ficha del fallecido"
             value={conteos.nichosSinDatos}
             icon={HelpCircle}
             tone={conteos.nichosSinDatos > 0 ? "warning" : "neutral"}
