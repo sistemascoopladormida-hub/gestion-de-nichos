@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
 
@@ -37,6 +38,12 @@ function LoginForm() {
             const data = await res.json();
             setLoading(false);
             if (!res.ok) {
+              if (data.code === "PASSWORD_NOT_SET") {
+                router.push(
+                  `/activar-cuenta?usuario=${encodeURIComponent(usuario.trim())}`,
+                );
+                return;
+              }
               setError(data.error ?? "No se pudo iniciar sesión");
               return;
             }
@@ -67,6 +74,19 @@ function LoginForm() {
           <button type="submit" disabled={loading} className="ui-btn-primary w-full">
             {loading ? "Ingresando…" : "Ingresar"}
           </button>
+          <p className="border-t border-stone/60 pt-4 text-center text-sm text-driftwood">
+            ¿Es su primer acceso?{" "}
+            <Link
+              href={
+                usuario.trim()
+                  ? `/activar-cuenta?usuario=${encodeURIComponent(usuario.trim())}`
+                  : "/activar-cuenta"
+              }
+              className="font-medium text-forest hover:underline"
+            >
+              Crear o activar contraseña
+            </Link>
+          </p>
         </form>
       </div>
     </div>

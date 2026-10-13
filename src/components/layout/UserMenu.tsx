@@ -1,6 +1,7 @@
 "use client";
 
-import { LogOut } from "lucide-react";
+import { KeyRound, LogOut } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import type { SessionUser } from "@/types/domain";
@@ -65,10 +66,19 @@ export function UserMenu({ user }: { user: SessionUser }) {
               {user.rol}
             </span>
           </div>
+          <Link
+            href="/cuenta/contrasena"
+            role="menuitem"
+            className="mt-1 flex w-full items-center gap-2 rounded-[var(--radius-card)] px-3 py-2 text-sm text-ink hover:bg-linen/80"
+            onClick={() => setOpen(false)}
+          >
+            <KeyRound className="h-4 w-4 text-ash" aria-hidden />
+            Cambiar contraseña
+          </Link>
           <button
             type="button"
             role="menuitem"
-            className="mt-1 flex w-full items-center gap-2 rounded-[var(--radius-card)] px-3 py-2 text-left text-sm text-crimson hover:bg-[color-mix(in_oklab,#cf2d56_8%,#f2f1ed)]"
+            className="flex w-full items-center gap-2 rounded-[var(--radius-card)] px-3 py-2 text-left text-sm text-crimson hover:bg-[color-mix(in_oklab,#cf2d56_8%,#f2f1ed)]"
             onClick={async () => {
               await fetch("/api/auth/logout", { method: "POST" });
               router.push("/login");

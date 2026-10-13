@@ -43,6 +43,19 @@ export async function POST(request: Request) {
       );
     }
 
+    const sinContrasena =
+      !row.PASSWORD_HASH || row.PASSWORD_HASH.length === 0;
+    if (sinContrasena) {
+      return NextResponse.json(
+        {
+          error:
+            "Debe crear su contraseña antes de ingresar. Use «Activar cuenta».",
+          code: "PASSWORD_NOT_SET",
+        },
+        { status: 403 },
+      );
+    }
+
     const ok = await verifyPassword(body.password, row.PASSWORD_HASH);
     if (!ok) {
       return NextResponse.json(

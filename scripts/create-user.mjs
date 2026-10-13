@@ -24,13 +24,20 @@ const nombre = process.argv.find((a) => a.startsWith("--nombre="))?.split("=")[1
 const apellido = process.argv.find((a) => a.startsWith("--apellido="))?.split("=")[1];
 const usuario = process.argv.find((a) => a.startsWith("--usuario="))?.split("=")[1];
 const password = process.argv.find((a) => a.startsWith("--password="))?.split("=")[1];
+const pendiente = process.argv.includes("--pendiente");
 const rol =
   process.argv.find((a) => a.startsWith("--rol="))?.split("=")[1] ?? "OPERADOR";
 
-if (!nombre || !apellido || !usuario || !password) {
+if (!nombre || !apellido || !usuario) {
   console.error(
-    "Uso: node scripts/create-user.mjs --nombre=Sol --apellido=Bustos --usuario=sol.bustos --password=*** [--rol=OPERADOR|ADMINISTRADOR]",
+    "Uso: node scripts/create-user.mjs --nombre=... --apellido=... --usuario=... [--password=***] [--pendiente] [--rol=OPERADOR|ADMINISTRADOR]",
   );
+  console.error("  --pendiente: sin contraseña; el usuario la crea en /activar-cuenta");
+  process.exit(1);
+}
+
+if (!pendiente && !password) {
+  console.error("Indique --password=*** o --pendiente para autogestión de contraseña.");
   process.exit(1);
 }
 
@@ -50,7 +57,6 @@ const config = {
   },
 };
 
-const hash = await bcrypt.hash(password, 12);
 const pool = await sql.connect(config);
 
 const exists = await pool
@@ -59,19 +65,38 @@ const exists = await pool
   .query(`SELECT ID_USUARIO FROM dbo.USUARIOS WHERE USUARIO = @usuario`);
 
 if (exists.recordset.length === 0) {
-  await pool
-    .request()
-    .input("nombre", sql.NVarChar(100), nombre)
-    .input("apellido", sql.NVarChar(100), apellido)
-    .input("usuario", sql.VarChar(50), usuario)
-    .input("rol", sql.VarChar(20), rol)
-    .input("hash", sql.VarBinary(256), Buffer.from(hash, "utf8"))
-    .query(`
-      INSERT INTO dbo.USUARIOS (NOMBRE, APELLIDO, USUARIO, ROL, PASSWORD_HASH, PASSWORD_SALT)
-      VALUES (@nombre, @apellido, @usuario, @rol, @hash, NULL)
-    `);
-  console.log("Usuario creado:", usuario, `(${rol})`);
+  if (pendiente) {
+    await pool
+      .request()
+      .input("nombre", sql.NVarChar(100), nombre)
+      .input("apellido", sql.NVarChar(100), apellido)
+      .input("usuario", sql.VarChar(50), usuario)
+      .input("rol", sql.VarChar(20), rol)
+      .query(`
+        INSERT INTO dbo.USUARIOS (NOMBRE, APELLIDO, USUARIO, ROL, PASSWORD_HASH, PASSWORD_SALT)
+        VALUES (@nombre, @apellido, @usuario, @rol, NULL, NULL)
+      `);
+    console.log("Usuario creado (pendiente de contraseña):", usuario, `(${rol})`);
+    console.log("Activación: /activar-cuenta?usuario=" + encodeURIComponent(usuario));
+  } else {
+    const hash = await bcrypt.hash(password, 12);
+    await pool
+      .request()
+      .input("nombre", sql.NVarChar(100), nombre)
+      .input("apellido", sql.NVarChar(100), apellido)
+      .input("usuario", sql.VarChar(50), usuario)
+      .input("rol", sql.VarChar(20), rol)
+      .input("hash", sql.VarBinary(256), Buffer.from(hash, "utf8"))
+      .query(`
+        INSERT INTO dbo.USUARIOS (NOMBRE, APELLIDO, USUARIO, ROL, PASSWORD_HASH, PASSWORD_SALT)
+        VALUES (@nombre, @apellido, @usuario, @rol, @hash, NULL)
+      `);
+    console.log("Usuario creado:", usuario, `(${rol})`);
+  }
+} else if (pendiente) {
+  console.log("Usuario ya existía:", usuario, "(sin cambios)");
 } else {
+  const hash = await bcrypt.hash(password, 12);
   await pool
     .request()
     .input("usuario", sql.VarChar(50), usuario)

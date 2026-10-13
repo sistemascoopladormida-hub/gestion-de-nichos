@@ -140,3 +140,34 @@ export const prestamoPatchBodySchema = z.object({
   estado: z.enum(["RESUELTO", "TRASLADADO", "CONVERTIDO_EN_ARANCEL"]),
   fechaResolucion: zOptionalDate,
 });
+
+const zNewPassword = z
+  .string()
+  .min(8, "Use al menos 8 caracteres")
+  .max(128, "Contraseña demasiado larga");
+
+export const setupPasswordBodySchema = z
+  .object({
+    usuario: z.string().trim().min(1, "Indique su usuario"),
+    password: zNewPassword,
+    passwordConfirm: z.string(),
+  })
+  .refine((d) => d.password === d.passwordConfirm, {
+    message: "Las contraseñas no coinciden",
+    path: ["passwordConfirm"],
+  });
+
+export const changePasswordBodySchema = z
+  .object({
+    currentPassword: z.string().min(1, "Indique su contraseña actual"),
+    password: zNewPassword,
+    passwordConfirm: z.string(),
+  })
+  .refine((d) => d.password === d.passwordConfirm, {
+    message: "Las contraseñas no coinciden",
+    path: ["passwordConfirm"],
+  })
+  .refine((d) => d.password !== d.currentPassword, {
+    message: "La nueva contraseña debe ser distinta a la actual",
+    path: ["password"],
+  });
